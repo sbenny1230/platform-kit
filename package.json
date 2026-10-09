@@ -1,0 +1,24 @@
+{
+  "name": "platform-kit",
+  "version": "1.0.0",
+  "description": "CLI and templates for scaffolding Node.js and Python services on Kubernetes, with Terraform-managed infrastructure and GitOps deployment via Argo CD.",
+  "main": "index.js",
+  "bin": {
+    "create-service": "./cli/createService.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sbenny1230/platform-kit.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/sbenny1230/platform-kit/issues"
+  },
+  "homepage": "https://github.com/sbenny1230/platform-kit#readme"
+}
