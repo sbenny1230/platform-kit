@@ -2,7 +2,10 @@ import http from "http";
 
 const port = process.env.PORT || 3000;
 
-const requestHandler = (req, res) => {
+const requestHandler = (
+  req: http.IncomingMessage,
+  res: http.ServerResponse,
+) => {
   if (req.method === "GET" && req.url === "/health") {
     res.writeHead(200, { "Content-Type": "application/json" });
     return res.end(JSON.stringify({ status: "ok" }));
@@ -17,6 +20,7 @@ const requestHandler = (req, res) => {
   return res.end(JSON.stringify({ error: "Not Found" }));
 };
 
-http.createServer(requestHandler).listen(port, () => {
-  console.log(`Server running at http://localhost:${port}/`);
+const server = http.createServer(requestHandler);
+server.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
 });
