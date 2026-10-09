@@ -54,11 +54,17 @@ so each new service starts from the same structure, deployment config and infras
 - **Date:** 2026-10-09
 - **Status:** Accepted
 
-**Decision.** Node.js is the first service template. Python follows once the Node.js path works
-end to end (scaffold → CI → GitOps → running on the cluster).
+**Decision.** Node.js comes first, built as two templates at the same time: JavaScript
+(`templates/nodejs-service`) and TypeScript (`templates/nodejs-typescript-service`). Python follows
+once the Node.js path works end to end (scaffold → CI → GitOps → running on the cluster).
 
 **Why.**
 - These two cover most web/API and data/ML workloads.
+- Many teams standardise on TypeScript for new Node.js services, but plain JavaScript keeps the
+  barrier low. Offering both lets the person scaffolding choose.
+- Building JavaScript and TypeScript together tests the template structure early. TypeScript
+  adds a build step (compile, then run `dist/`) that the Dockerfile and CI stages must handle,
+  so differences between templates appear before Python does.
 - Building one language end to end first proves the whole pipeline before effort is split
   across two.
 - Planning for Python from the start keeps the template structure language-neutral. The
@@ -66,9 +72,12 @@ end to end (scaffold → CI → GitOps → running on the cluster).
   shared parts (Kubernetes manifests, Terraform module, monitoring).
 
 **Trade-offs.**
-- Until Python lands, nothing checks that the template structure really is language-neutral.
+- Until Python lands, nothing fully checks that the template structure is language-neutral.
   Some Node.js assumptions may need reworking.
-- Two languages mean twice the templates, CI matrix and dependency upkeep.
+- Three templates (JavaScript, TypeScript, Python) mean three sets of Dockerfiles, CI steps and
+  dependencies to maintain. JavaScript and TypeScript duplicate a lot, so shared parts should be
+  factored out rather than copied.
+- The CLI needs a way to pick a template (e.g. a `--template` flag or a prompt).
 - Other languages (Go, Java) are out of scope until the template structure is stable.
 
 ---
@@ -203,7 +212,7 @@ These need decisions. Each gets its own entry once it's made:
 | Second cloud provider | GCP (GKE), Azure (AKS) |
 | CI/CD platform | GitHub Actions, GitLab CI |
 | Monitoring stack | Prometheus + Grafana, CloudWatch, Datadog |
-| CLI implementation | JavaScript vs TypeScript; framework (e.g. `oclif` vs `commander`) |
+| CLI implementation | Language for the CLI itself (currently JavaScript) and framework (e.g. `oclif` vs `commander`) |
 
 ---
 

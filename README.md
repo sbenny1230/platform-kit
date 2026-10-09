@@ -9,7 +9,7 @@ It covers the whole path from "I need a new service" to "it's running in product
 - **Production behaviour.** Health checks and autoscaling, demonstrated by load-testing with k6 and by killing pods to show recovery.
 - **A scaffolding CLI.** One command generates a new service with its Dockerfile, Terraform module, CI/CD pipeline and monitoring already wired up. This treats the platform as something other engineers consume.
 
-**Scope.** The first version targets AWS (EKS) with Node.js services. Python service templates and other cloud providers (GCP, Azure) come next. The design keeps those additions to new templates and a new Terraform cloud layer, not a rewrite.
+**Scope.** The first version targets AWS (EKS) with Node.js services, in JavaScript or TypeScript. Python service templates and other cloud providers (GCP, Azure) come next. The design keeps those additions to new templates and a new Terraform cloud layer, not a rewrite.
 
 > **Status: in progress.** The repo is at an early stage. The sections below describe the target design. Commands marked *(planned)* don't exist yet. See [Roadmap](#roadmap) for what's done.
 
@@ -79,12 +79,13 @@ From this point on, the cluster follows the GitOps config. Deployments happen by
 ### 3. Scaffold a new service
 
 ```bash
-npx platform-kit create my-service
+npx platform-kit create my-service                         # JavaScript
+npx platform-kit create my-service --template typescript   # TypeScript
 ```
 
 This generates a ready-to-deploy service:
 
-- a Node.js app with health endpoints
+- a Node.js app (JavaScript or TypeScript) with health endpoints
 - a Dockerfile
 - a CI/CD pipeline that builds, pushes and updates the GitOps config
 - a Terraform module for the service's AWS resources
@@ -120,7 +121,7 @@ The trade-offs matter more than the code here. Each significant choice, such as 
 - [ ] Argo CD bootstrap and GitOps config
 - [ ] Health checks and autoscaling (HPA)
 - [ ] k6 load test and pod-failure demo
-- [ ] Scaffolding CLI with service template
+- [ ] Scaffolding CLI with JavaScript and TypeScript service templates
 - [ ] CI/CD pipeline in the template
 - [ ] Monitoring wired into the template
 - [ ] Write-up and recorded demo of the CLI
