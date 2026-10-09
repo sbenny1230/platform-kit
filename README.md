@@ -11,7 +11,7 @@ It covers the whole path from "I need a new service" to "it's running in product
 
 **Scope.** The first version targets AWS (EKS) with Node.js services, in JavaScript or TypeScript. Python service templates and other cloud providers (GCP, Azure) come next. The design keeps those additions to new templates and a new Terraform cloud layer, not a rewrite.
 
-> **Status: in progress.** The repo is at an early stage. The sections below describe the target design. Commands marked *(planned)* don't exist yet. See [Roadmap](#roadmap) for what's done.
+> **Status: in progress.** The scaffolding CLI runs locally (see [Try the CLI now](#try-the-cli-now)). The infrastructure and GitOps parts are still to be built. Anything marked *(planned)* doesn't exist yet. See [Roadmap](#roadmap) for what's done.
 
 ## How it fits together
 
@@ -33,16 +33,16 @@ flowchart LR
 4. Argo CD notices the change and syncs the cluster to match Git.
 5. Kubernetes keeps the service healthy (probes, restarts) and scales it with load.
 
-## Repository layout *(planned)*
+## Repository layout
 
 ```
 platform-kit/
 ├── cli/            # Scaffolding CLI (Node.js)
-├── templates/      # Service templates the CLI generates from
-├── infra/          # Terraform: VPC, EKS, IAM, ECR
-├── gitops/         # Argo CD applications and Kubernetes manifests
-├── services/       # Example Node.js service
-├── load-tests/     # k6 scripts
+├── templates/      # Service templates: nodejs-service, nodejs-typescript-service
+├── infra/          # (planned) Terraform: VPC, EKS, IAM, ECR
+├── gitops/         # (planned) Argo CD applications and Kubernetes manifests
+├── services/       # (planned) Example Node.js service
+├── load-tests/     # (planned) k6 scripts
 └── docs/           # Decision log, write-up, demo
 ```
 
@@ -57,7 +57,25 @@ platform-kit/
 
 > **Cost warning:** EKS, NAT gateways and load balancers are billed by the hour. Tear everything down when you finish (see step 6).
 
-## Running it *(planned)*
+## Try the CLI now
+
+The scaffolding CLI works locally today and needs only Node.js. From the repo root:
+
+```bash
+node cli/createService.js my-service                          # JavaScript (default)
+node cli/createService.js my-service --template typescript    # TypeScript
+```
+
+It creates a `my-service/` folder in the current directory, copied from the chosen template in `templates/`. It refuses to overwrite a folder that already exists.
+
+| `--template` | Template folder |
+|--------------|-----------------|
+| `javascript` (default) | `templates/nodejs-service` |
+| `typescript` | `templates/nodejs-typescript-service` |
+
+For now the templates contain only a minimal app: a JavaScript HTTP server, and an empty TypeScript entry point. The Dockerfile, CI/CD, Terraform module and manifests are still to come.
+
+## Running the full platform *(planned)*
 
 ### 1. Provision the infrastructure
 
@@ -78,12 +96,14 @@ From this point on, the cluster follows the GitOps config. Deployments happen by
 
 ### 3. Scaffold a new service
 
+The CLI will be published as an npm package, so it runs without cloning the repo:
+
 ```bash
 npx platform-kit create my-service                         # JavaScript
 npx platform-kit create my-service --template typescript   # TypeScript
 ```
 
-This generates a ready-to-deploy service:
+When finished, this generates a ready-to-deploy service:
 
 - a Node.js app (JavaScript or TypeScript) with health endpoints
 - a Dockerfile
@@ -121,7 +141,9 @@ The trade-offs matter more than the code here. Each significant choice, such as 
 - [ ] Argo CD bootstrap and GitOps config
 - [ ] Health checks and autoscaling (HPA)
 - [ ] k6 load test and pod-failure demo
-- [ ] Scaffolding CLI with JavaScript and TypeScript service templates
+- [x] Scaffolding CLI: copies a chosen template (`--template javascript|typescript`)
+- [ ] TypeScript template app code
+- [ ] Publish the CLI to npm (`npx platform-kit create`)
 - [ ] CI/CD pipeline in the template
 - [ ] Monitoring wired into the template
 - [ ] Write-up and recorded demo of the CLI
