@@ -3,7 +3,7 @@ import { existsSync } from "fs";
 import fs from "fs/promises";
 import path from "path";
 
-import { TEMPLATES, DEFAULT_TEMPLATE, USAGE, HELP } from "./constants.js";
+import { TEMPLATES, USAGE, HELP } from "./createService.constants.js";
 import parseArgs from "./parseArgs.js";
 
 async function main() {
@@ -39,7 +39,7 @@ async function main() {
   }
 
   const templateDir = path.join(
-    __dirname,
+    import.meta.dirname,
     "..",
     "..",
     "templates",

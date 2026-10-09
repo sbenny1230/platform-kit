@@ -1,3 +1,5 @@
+import { DEFAULT_TEMPLATE } from "./createService.constants.js";
+
 export default function parseArgs(args) {
   let serviceName;
   let template = DEFAULT_TEMPLATE;
